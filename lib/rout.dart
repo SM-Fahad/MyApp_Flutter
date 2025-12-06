@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/paramtest.dart';
 
 void main() {
   runApp(MyRoutingApp());
@@ -23,6 +24,10 @@ class MyRoutingApp extends StatelessWidget {
 
 // ---------------- Home Page ----------------
 class HomePage extends StatelessWidget {
+  void handleMessage(String msg) {
+    debugPrint("Callback Received: $msg");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +36,6 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-
             // 1. Named Route (pushNamed)
             ElevatedButton(
               onPressed: () {
@@ -47,12 +51,31 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => ProfilePage()),
+                  MaterialPageRoute(builder: (context) => ProfilePage()),
                 );
               },
               child: Text("Go to Profile Page"),
             ),
 
+            SizedBox(height: 20),
+
+            // 3. Route with parameter()
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CustomCard(
+                      title: "Mohammad Fahad",
+                      subtitle: "Full-Stack Developer",
+                      count: 5,
+                      onTapmessage: handleMessage,
+                    ),
+                  ),
+                );
+              },
+              child: Text("Go to CustomCard Page"),
+            ),
           ],
         ),
       ),
@@ -65,9 +88,7 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("About Page"),
-      ),
+      appBar: AppBar(title: Text("About Page")),
       body: Center(
         child: ElevatedButton(
           onPressed: () {
@@ -85,9 +106,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Profile Page"),
-      ),
+      appBar: AppBar(title: Text("Profile Page")),
       body: Center(
         child: ElevatedButton(
           onPressed: () {

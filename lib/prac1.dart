@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(ClassTest());
 }
 
 class MyApp extends StatelessWidget {
@@ -763,7 +763,7 @@ class Practice5 extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        print("object");
+                        print("Add to drive");
                       },
                       icon: Icon(Icons.add_to_drive),
                     ),
@@ -1339,6 +1339,41 @@ class Practice16 extends StatelessWidget {
           child: Icon(Icons.ac_unit_sharp),
         ),
         body: const Center(child: Text('Hello World')),
+      ),
+    );
+  }
+}
+
+class ClassTest extends StatelessWidget {
+  const ClassTest({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "Product Page",
+      home: Scaffold(
+        appBar: AppBar(title: Text("Product Page")),
+        body: Padding(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            children: [
+              //Search Bar
+              TextField(
+                decoration: InputDecoration(
+                  hintText: "Search for Specific Products...",
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 10),
+              Row(children: [Container(width: 20)]),
+            ],
+          ),
+        ),
       ),
     );
   }
