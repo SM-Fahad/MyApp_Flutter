@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 
 void main() {
   runApp(Test());
@@ -70,14 +71,71 @@ class _InputHomePageState extends State<InputHomePage> {
   DateTime? selectedDate;
   File? pickedImage;
 
-  void _showToast() {
-    Fluttertoast.showToast(
-      msg:
-          "Name: ${nameCtrl.text}\nEmail: ${emailCtrl.text}\nPassword: ${passCtrl.text}\nNumber: ${numberCtrl.text}\nMultiline: ${multiLineCtrl.text}",
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        pickedImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<void> pickImageVia(ImageSource source) async {
+    final picker = ImagePicker();
+
+    try {
+      final pickedFile = await picker.pickImage(source: source);
+      if (pickedFile != null) {
+        setState(() {
+          pickedImage = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      print("Error Picking Image: $e");
+    }
+  }
+
+  void openImageSourceDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogCtx) {
+        return AlertDialog(
+          title: const Text("Select Image Source"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.image),
+                title: const Text("Gallery"),
+                onTap: () {
+                  Navigator.of(dialogCtx, rootNavigator: true).pop();
+                  pickImageVia(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Camera"),
+                onTap: () {
+                  Navigator.of(dialogCtx, rootNavigator: true).pop();
+                  pickImageVia(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
+
+  // void _showToast() {
+  //   Fluttertoast.showToast(
+  //     msg:
+  //         "Name: ${nameCtrl.text}\nEmail: ${emailCtrl.text}\nPassword: ${passCtrl.text}\nNumber: ${numberCtrl.text}\nMultiline: ${multiLineCtrl.text}",
+  //     toastLength: Toast.LENGTH_LONG,
+  //     gravity: ToastGravity.BOTTOM,
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +144,75 @@ class _InputHomePageState extends State<InputHomePage> {
       body: ListView(
         padding: EdgeInsets.all(20),
         children: [
+          //Image
+          Text(
+            "Profile Picture",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 20),
+
+          Center(
+            child: GestureDetector(
+              onTap: pickImage,
+              child: CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.grey,
+                backgroundImage: pickedImage != null
+                    ? FileImage(pickedImage!)
+                    : null,
+                child: pickedImage == null
+                    ? Icon(Icons.camera_alt, size: 50, color: Colors.white)
+                    : null,
+              ),
+            ),
+          ),
+
+          SizedBox(height: 20),
+          //Image Picker
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.camera_alt),
+                    iconSize: 40,
+                    onPressed: () {
+                      pickImageVia(ImageSource.camera);
+                    },
+                  ),
+                  Text("Camera"),
+                ],
+              ),
+
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.photo),
+                    iconSize: 40,
+                    onPressed: () {
+                      pickImageVia(ImageSource.gallery);
+                    },
+                  ),
+                  Text("Gallery"),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: openImageSourceDialog,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.amber,
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+            ),
+            child: const Text("Pick Image"),
+          ),
+          SizedBox(height: 20),
           //Name
+
           TextField(
             controller: nameCtrl,
             decoration: InputDecoration(
